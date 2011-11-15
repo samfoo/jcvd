@@ -16,16 +16,21 @@ module ThoughtWorks
 
       if rows.size > 1
         rows[1..-1].inject({}) do |map, node| 
-          map[node.xpath("td")[0].text.strip] = node.xpath("td")[3].text.strip
+          name = node.xpath("td")[0].text.strip
+          mobile = node.xpath("td")[3].text.strip
+          email = "#{node.xpath("td")[4].text.strip.split(",")[0]}@thoughtworks.com"
+
+          map[name] = [mobile, email]
           map
         end
       else
+        # TODO: Handle names better.
         name_tokens = name.split(" ")
 
         if name_tokens.size > 2
           search [name_tokens[0], name_tokens[-1]].join(" ")
         else
-          [nil, nil]
+          {}
         end
       end
     end

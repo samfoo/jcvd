@@ -15,11 +15,10 @@ else
 end
 
 deadline = due_date.strftime("%d/%m/%Y")
-puts "Finding bad guys for #{deadline}..."
 
 user = ask("peoplesoft user: ")
 pass = ask("peoplesoft pass: ") { |q| q.echo = "*" }
-puts "Timewarping to fuck up some bad guys..."
+puts "Finding bad guys for #{deadline}..."
 ts = ThoughtWorks::Timesheets.new(user, pass)
 badguys = ts.lates(deadline)
 puts "Found #{badguys.size} bad guys..."
@@ -34,6 +33,7 @@ badguys.each do |b|
   # blowing chunks when they encounter it. Just one off them here for now.
   b = b.gsub("\xea", 'e').gsub("\xf6", 'o')
 
-  name, number = gab.search(b).first
-  puts "#{b} -> #{number}"
+  name, number_and_email = gab.search(b).first
+  number, email = *number_and_email
+  puts "#{b} : #{email} -> #{number}"
 end
