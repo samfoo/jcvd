@@ -18,9 +18,9 @@ module ThoughtWorks
         rows[1..-1].inject({}) do |map, node| 
           name = node.xpath("td")[0].text.strip
           mobile = node.xpath("td")[3].text.strip
-          email = "#{node.xpath("td")[4].text.strip.split(",")[0]}@thoughtworks.com"
+          email = node.xpath("td")[1].text.strip
 
-          map[name] = [mobile, email]
+          map[name] = [normalize_number(mobile), email]
           map
         end
       else
@@ -36,6 +36,32 @@ module ThoughtWorks
     end
 
     private 
+
+    def pick_oz_number(numbers)
+      numbers.inject(numbers.first) do |n, cur|
+        if cur.start_with?("04") || cur.start_with?("61")
+          cur
+        else
+          n
+        end
+      end
+    end
+
+    def normalize_number(number)
+      return number if number.size == 0
+
+      number = number.gsub(/\s+/, "")
+      number = number.gsub(/\(0\)/, "")
+      number = number.gsub(/\(\+?61\)/, "+61")
+      number = number.gsub(/\-/, "")
+      number = pick_oz_number(number.split(/[^\d]/))
+      
+      number = "+#{number}" if number.start_with?("61")
+      number = "+61#{number[1..-1]}" if number.start_with?("04")
+      number = "+61#{number}" if number.start_with?("4")
+      number = number.gsub(/\+6104/, "+614") if number.start_with?("+6104")
+      number
+    end
 
     def login(user, pass)
       form = @agent.get("http://gab.thoughtworks.com/").forms.first
