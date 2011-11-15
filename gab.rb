@@ -1,4 +1,5 @@
 require 'mechanize'
+require 'csv'
 
 module ThoughtWorks
   class Gab
@@ -21,7 +22,6 @@ module ThoughtWorks
     private 
 
     def login(user, pass)
-      result = @agent.get("http://gab.thoughtworks.com/")
       form = @agent.get("http://gab.thoughtworks.com/").forms.first
 
       form.password = pass 
