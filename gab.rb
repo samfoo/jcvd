@@ -13,9 +13,20 @@ module ThoughtWorks
       form.q = name
       results = @agent.submit(form, form.buttons.first)
       rows = results.parser.xpath('//table[@class="search-results"]/tr')
-      rows[1..-1].inject({}) do |map, node| 
-        map[node.xpath("td")[0].text.strip] = node.xpath("td")[3].text.strip
-        map
+
+      if rows.size > 1
+        rows[1..-1].inject({}) do |map, node| 
+          map[node.xpath("td")[0].text.strip] = node.xpath("td")[3].text.strip
+          map
+        end
+      else
+        name_tokens = name.split(" ")
+
+        if name_tokens.size > 2
+          search [name_tokens[0], name_tokens[-1]].join(" ")
+        else
+          [nil, nil]
+        end
       end
     end
 
