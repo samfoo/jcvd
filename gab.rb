@@ -51,6 +51,7 @@ module ThoughtWorks
       return number if number.size == 0
 
       number = number.gsub(/\s+/, "")
+      number = number.gsub(/\./, "")
       number = number.gsub(/\(0\)/, "")
       number = number.gsub(/\(\+?61\)/, "+61")
       number = number.gsub(/\-/, "")
