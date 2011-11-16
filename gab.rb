@@ -1,5 +1,4 @@
 require 'mechanize'
-require 'csv'
 
 module ThoughtWorks
   class Gab
