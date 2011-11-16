@@ -24,9 +24,9 @@ ts = ThoughtWorks::Timesheets.new(user, pass)
 badguys = ts.lates(deadline)
 $stderr.puts "There were #{badguys.size} of them..."
 
-user = ENV["GABUSER"]
-pass = ENV["GABPASS"]
-gab = ThoughtWorks::Gab.new(user, pass)
+user = ENV["TWUSER"]
+pass = ENV["TWPASS"]
+gab = ThoughtWorks::Gab.new(user.gsub(/@thoughtworks\.com/, ""), pass)
 
 $stderr.puts "Forgetting your timesheet is forever... until now."
 $stderr.puts "The Time Enforcement Commission is on the case."

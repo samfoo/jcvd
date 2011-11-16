@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'trollop'
+
+opts = Trollop::options do
+  banner <<-EOS
+usage: jcvd [OPTIONS...]
+  EOS
+  opt :call, "Call some bad guys up. You know: on their phones."
+  opt :sms, "Send some fools a message."
+  opt :email, "Drop the people's elbow on some peep's inboxes."
+end
+
+def sms(badguy)
+  require './sms'
+
+  mobile = badguy["mobile"] || ""
+  sms = ThoughtWorks::SMS.new(ENV["TWILIO_SID"], ENV["TWILIO_AUTH"])
+  sms.send(mobile, "Turn in your timecard!")
+end
+
+def call(badguy)
+  require './phone'
+
+  mobile = badguy["mobile"] || ""
+  phone = ThoughtWorks::Phone.new(ENV["TWILIO_SID"], ENV["TWILIO_AUTH"])
+  phone.call(mobile) unless mobile.empty?
+end
+
+def email(badguy)
+  require 'gmail'
+
+  puts "Mailing..."
+  Gmail.new(ENV["TWUSER"], ENV["TWPASS"]) do |gmail|
+    p gmail.deliver do
+      to badguy["email"]
+      subject "Your timesheet is nearly overdue!"
+      body "Turn in your timesheet"
+    end
+  end
+end
+
+ARGF.each do |timecode|
+  badguy = JSON.parse(timecode)
+
+  sms(badguy) if opts[:sms]
+  call(badguy) if opts[:call]
+  email(badguy) if opts[:email]
+end
