@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'highline/import'
+require 'json'
 
 require './gab'
 require './timesheets'
@@ -16,18 +16,21 @@ end
 
 deadline = due_date.strftime("%d/%m/%Y")
 
-user = ask("peoplesoft user: ")
-pass = ask("peoplesoft pass: ") { |q| q.echo = "*" }
-puts "Finding bad guys for #{deadline}..."
+user = ENV["PUSER"] 
+pass = ENV["PPASS"] 
+$stderr.puts "They killed his timesheet ten years ago... on the week ending #{deadline}..."
+$stderr.puts "There's still time to save her."
 ts = ThoughtWorks::Timesheets.new(user, pass)
 badguys = ts.lates(deadline)
-puts "Found #{badguys.size} bad guys..."
+$stderr.puts "There were #{badguys.size} of them..."
 
-user = ask("gab user: ")
-pass = ask("gab pass: ") { |q| q.echo = "*" }
+user = ENV["GABUSER"]
+pass = ENV["GABPASS"]
 gab = ThoughtWorks::Gab.new(user, pass)
 
-puts "GPS'ing all up on 'em..."
+$stderr.puts "Forgetting your timesheet is forever... until now."
+$stderr.puts "The Time Enforcement Commission is on the case."
+
 badguys.each do |b|
   # A couple people have unicode craziness, and either oracle or gab are
   # blowing chunks when they encounter it. Just one off them here for now.
@@ -35,5 +38,6 @@ badguys.each do |b|
 
   name, number_and_email = gab.search(b).first
   number, email = *number_and_email
-  puts "#{b} : #{email} -> #{number}"
+  puts ({"name" => b, "email" => email, "mobile" => number}.to_json)
 end
+
