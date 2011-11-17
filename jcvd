@@ -2,6 +2,7 @@
 
 require 'json'
 require 'trollop'
+require 'erb'
 
 opts = Trollop::options do
   banner <<-EOS
@@ -15,9 +16,12 @@ end
 def sms(badguy)
   require './sms'
 
+  template = ERB.new(File.new("sms.body.erb").read)
+  body = template.result(binding)
+
   mobile = badguy["mobile"] || ""
   sms = ThoughtWorks::SMS.new(ENV["SMSUSER"], ENV["SMSPASS"])
-  sms.send(mobile, "Turn in your timecard!")
+  sms.send(mobile, body)
 end
 
 def call(badguy)
@@ -29,16 +33,24 @@ def call(badguy)
 end
 
 def email(badguy)
-  require 'gmail'
+  require 'pony'
 
-  puts "Mailing..."
-  Gmail.new(ENV["TWUSER"], ENV["TWPASS"]) do |gmail|
-    p gmail.deliver do
-      to badguy["email"]
-      subject "Your timesheet is nearly overdue!"
-      body "Turn in your timesheet"
-    end
-  end
+  template = ERB.new(File.new("email.subject.erb").read)
+  subject = template.result(binding)
+
+  template = ERB.new(File.new("email.body.erb").read)
+  body = template.result(binding)
+
+  Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
+    :address => 'smtp.gmail.com',
+    :port => '587',
+    :enable_starttls_auto => true,
+    :user_name => ENV["TWUSER"],
+    :password => ENV["TWPASS"],
+    :authentication => :plain,
+    :domain => "HELO",
+  },
+  :subject => subject, :body => body)
 end
 
 ARGF.each do |timecode|
