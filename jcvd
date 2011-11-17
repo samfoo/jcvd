@@ -16,7 +16,7 @@ def sms(badguy)
   require './sms'
 
   mobile = badguy["mobile"] || ""
-  sms = ThoughtWorks::SMS.new(ENV["TWILIO_SID"], ENV["TWILIO_AUTH"])
+  sms = ThoughtWorks::SMS.new(ENV["SMSUSER"], ENV["SMSPASS"])
   sms.send(mobile, "Turn in your timecard!")
 end
 
