@@ -9,7 +9,7 @@ module ThoughtWorks
       login(user, pass)
     end
 
-    def lates(due_date)
+    def lates(due_date, region)
       form = @agent.get("http://psfs89.thoughtworks.com/psc/fsprd89_6/EMPLOYEE/ERP/q/?ICAction=ICQryNameURL=PUBLIC.TW_TIME_MISSING_LATE_ONTIME").forms.first
       form.ICAction = "#ICOK"
       form.InputKeys_TW_WEEK_END_DT = due_date
@@ -23,7 +23,7 @@ module ThoughtWorks
       temp.close
 
       all = CSV.read(temp.path)[1..-1]
-      badguys = all.select { |e| e[0].downcase.start_with?("au") && e[4] == "Y" }
+      badguys = all.select { |e| e[0].downcase.start_with?(region) && e[4] == "Y" }
       badguys.collect do |e| 
         last, first = e[2].split(",")
         [first, last].join(" ")

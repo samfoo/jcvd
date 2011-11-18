@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
-require 'json'
-require 'trollop'
 require 'erb'
+require 'json'
+require 'logger'
+require 'trollop'
 
 opts = Trollop::options do
   banner <<-EOS
@@ -21,7 +22,11 @@ usage: jcvd [OPTIONS...]
     :default => File.join(File.dirname(__FILE__), "email.subject.erb")
   opt :body, "The erb file to eval as the email body",
     :default => File.join(File.dirname(__FILE__), "email.body.erb")
+  
+  opt :debug, "There's never enough time. Never enough for what? To satisfy a [developer who wants to see the logs]"
 end
+
+Mechanize::log = Logger.new($stderr) if opts[:debug]
 
 def sms(badguy)
   require './sms'

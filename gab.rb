@@ -7,7 +7,7 @@ module ThoughtWorks
       @gab = login(user, pass)
     end
 
-    def search(name)
+    def search(name, region)
       form = @gab.form("searchForm")
       form.q = name
       results = @agent.submit(form, form.buttons.first)
@@ -19,7 +19,7 @@ module ThoughtWorks
           mobile = node.xpath("td")[3].text.strip
           email = node.xpath("td")[1].text.strip
 
-          map[name] = [normalize_number(mobile), email]
+          map[name] = [normalize(mobile), email]
           map
         end
       else
@@ -46,9 +46,7 @@ module ThoughtWorks
       end
     end
 
-    def normalize_number(number)
-      return number if number.size == 0
-
+    def normalize_au(number)
       number = number.gsub(/\s+/, "")
       number = number.gsub(/\./, "")
       number = number.gsub(/\(0\)/, "")
@@ -61,6 +59,17 @@ module ThoughtWorks
       number = "+61#{number}" if number.start_with?("4")
       number = number.gsub(/\+6104/, "+614") if number.start_with?("+6104")
       number
+    end
+
+    def normalize(number, region)
+      return number if number.size == 0
+
+      method = "normalize_#{region.to_s}"
+      if respond_to?(method)
+        send(method, number)
+      else
+        number
+      end
     end
 
     def login(user, pass)
