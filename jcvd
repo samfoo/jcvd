@@ -9,8 +9,18 @@ opts = Trollop::options do
 usage: jcvd [OPTIONS...]
   EOS
   opt :call, "Call some bad guys up. You know: on their phones."
+  opt :say, "The URL to the twiml you want eval'd during the call", 
+    :default => "http://samfoo.github.com/jcvd/say.xml"
+
   opt :sms, "Send some fools a message."
+  opt :message, "The erb file to eval as the SMS message body",
+    :default => File.join(File.dirname(__FILE__), "sms.body.erb")
+
   opt :email, "Drop the people's elbow on some peep's inboxes."
+  opt :subject, "The erb file to eval as the email subject",
+    :default => File.join(File.dirname(__FILE__), "email.subject.erb")
+  opt :body, "The erb file to eval as the email body",
+    :default => File.join(File.dirname(__FILE__), "email.body.erb")
 end
 
 def sms(badguy)
@@ -53,8 +63,18 @@ def email(badguy)
   :subject => subject, :body => body)
 end
 
+actions = opts.select { |k, v| v && [:sms, :call, :email].include?(k) }
+gerunds = actions.keys.collect { |a| "#{a}ing" }
+if gerunds.size > 1
+  sentence = gerunds[0..-2].join(", ").capitalize + " and " + gerunds[-1]
+else
+  sentence = gerunds.first.capitalize
+end
+
 ARGF.each do |timecode|
   badguy = JSON.parse(timecode)
+
+  puts "#{sentence} #{badguy["name"]}"
 
   sms(badguy) if opts[:sms]
   call(badguy) if opts[:call]
