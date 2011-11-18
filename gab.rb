@@ -23,27 +23,23 @@ module ThoughtWorks
           map
         end
       else
-        # TODO: Handle names better.
-        name_tokens = name.split(" ")
+        tokens = name.split(" ")
+        first, *middles, last = tokens
 
-        if name_tokens.size > 2
-          search [name_tokens[0], name_tokens[-1]].join(" ")
-        else
-          {}
-        end
+        return search ([first] + middles[0..-2] + [last]).join(" ") if first && last
+        {}
       end
     end
 
     private 
 
-    def pick_oz_number(numbers)
-      numbers.inject(numbers.first) do |n, cur|
-        if cur.start_with?("04") || cur.start_with?("61")
-          cur
-        else
-          n
-        end
-      end
+    def find_au_number(numbers)
+      # Some people list more than one number in their GAB profile. Given a list
+      # of numbers, pick the one that looks like it's an australian mobile.
+      # This means it starts with either 04 or 61.
+      #
+      # If none of the numbers look australian, than just pick the first one.
+      numbers.select { |n| n.start_with?("04") || n.start_with?("61") }.first || numbers.first
     end
 
     def normalize_au(number)
@@ -52,7 +48,7 @@ module ThoughtWorks
       number = number.gsub(/\(0\)/, "")
       number = number.gsub(/\(\+?61\)/, "+61")
       number = number.gsub(/\-/, "")
-      number = pick_oz_number(number.split(/[^\d]/))
+      number = find_au_number(number.split(/[^\d]/))
       
       number = "+#{number}" if number.start_with?("61")
       number = "+61#{number[1..-1]}" if number.start_with?("04")
