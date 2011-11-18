@@ -19,14 +19,14 @@ module ThoughtWorks
           mobile = node.xpath("td")[3].text.strip
           email = node.xpath("td")[1].text.strip
 
-          map[name] = [normalize(mobile), email]
+          map[name] = [normalize(mobile, region), email]
           map
         end
       else
         tokens = name.split(" ")
         first, *middles, last = tokens
 
-        return search ([first] + middles[0..-2] + [last]).join(" ") if first && last
+        return search ([first] + middles[0..-2] + [last]).join(" "), region if middles.size > 0
         {}
       end
     end
@@ -60,12 +60,8 @@ module ThoughtWorks
     def normalize(number, region)
       return number if number.size == 0
 
-      method = "normalize_#{region.to_s}"
-      if respond_to?(method)
-        send(method, number)
-      else
-        number
-      end
+      method = "normalize_#{region.to_s}".to_sym
+      self.send(method, number)
     end
 
     def login(user, pass)
