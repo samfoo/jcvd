@@ -43,7 +43,7 @@ def sms(badguy)
   end
 end
 
-def call(badguy)
+def call(badguy, say)
   require './phone'
 
   mobile = badguy["mobile"] || ""
@@ -52,7 +52,7 @@ def call(badguy)
   if mobile.empty?
     $stderr.puts "Unable to call #{badguy["name"]}. No mobile number."
   else
-    phone.call(mobile)
+    phone.call(mobile, say)
   end
 end
 
@@ -91,6 +91,6 @@ ARGF.each do |timecode|
   puts "#{sentence} #{badguy["name"]}"
 
   sms(badguy) if opts[:sms]
-  call(badguy) if opts[:call]
+  call(badguy, opts[:say]) if opts[:call]
   email(badguy) if opts[:email]
 end

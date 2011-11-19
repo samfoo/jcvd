@@ -7,8 +7,8 @@ module ThoughtWorks
       @account = @client.account
     end
 
-    def call(number)
-      @account.calls.create(:from => "+61467970000", :to => number, :url => "https://raw.github.com/samfoo/jcvd/master/say.xml")
+    def call(number, say)
+      @account.calls.create(:from => "+61467970000", :to => number, :url => say)
     end
   end
 end
