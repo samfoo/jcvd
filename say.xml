@@ -1,4 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Response>
-    <Play loop="0">http://samfoo.github.com/jcvd/friday-timesheets.mp3</Play>
-</Response>
+<Response><Play>http://samfoo.github.com/jcvd/friday-timesheets.mp3</Play></Response>  
