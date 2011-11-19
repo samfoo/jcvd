@@ -61,7 +61,11 @@ module ThoughtWorks
       return number if number.size == 0
 
       method = "normalize_#{region.to_s}".to_sym
-      self.send(method, number)
+      if self.class.private_method_defined? method
+        self.send(method, number)
+      else
+        number
+      end
     end
 
     def login(user, pass)

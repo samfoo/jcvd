@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Response>
+    <Say voice="woman">
+        It's Monday Monday.
+        Gotta get down on Monday.
+        Everybody's turning in their time sheet time sheet.
+        Monday Monday.
+        Getting down on Monday.
+        Everybody's turning in their time sheet
+
+        Partying, Partying (Yeah)
+        Partying, Partying (Yeah)
+    </Say>
+
+    <Say loop="0">
+        Fun.
+    </Say>
+</Response>
