@@ -11,7 +11,7 @@ usage: jcvd [OPTIONS...]
   EOS
   opt :call, "Call some bad guys up. You know: on their phones."
   opt :say, "The URL to the twiml you want eval'd during the call", 
-    :default => "http://samfoo.github.com/jcvd/say.xml"
+    :default => "http://bit.ly/tw-timesheets"
 
   opt :sms, "Send some fools a message."
   opt :message, "The erb file to eval as the SMS message body",
@@ -28,10 +28,10 @@ end
 
 Mechanize::log = Logger.new($stderr) if opts[:debug]
 
-def sms(badguy)
+def sms(badguy, message)
   require './sms'
 
-  template = ERB.new(File.new("sms.body.erb").read)
+  template = ERB.new(File.new(message).read)
   body = template.result(binding)
 
   mobile = badguy["mobile"] || ""
@@ -56,13 +56,13 @@ def call(badguy, say)
   end
 end
 
-def email(badguy)
+def email(badguy, subject, body)
   require 'pony'
 
-  template = ERB.new(File.new("email.subject.erb").read)
+  template = ERB.new(File.new(subject).read)
   subject = template.result(binding)
 
-  template = ERB.new(File.new("email.body.erb").read)
+  template = ERB.new(File.new(body).read)
   body = template.result(binding)
 
   Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
@@ -90,7 +90,7 @@ ARGF.each do |timecode|
 
   puts "#{sentence} #{badguy["name"]}"
 
-  sms(badguy) if opts[:sms]
+  sms(badguy, opts[:message]) if opts[:sms]
   call(badguy, opts[:say]) if opts[:call]
-  email(badguy) if opts[:email]
+  email(badguy, opts[:subject], opts[:body]) if opts[:email]
 end
