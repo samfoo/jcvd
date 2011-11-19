@@ -85,7 +85,7 @@ def email(badguy, subject, body)
     :authentication => :plain,
     :domain => "HELO",
   },
-  :subject => subject, :body => body)
+  :subject => subject.strip, :body => body)
 end
 
 actions = opts.select { |k, v| v && [:sms, :call, :email].include?(k) }
