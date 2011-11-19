@@ -28,6 +28,17 @@ end
 
 Mechanize::log = Logger.new($stderr) if opts[:debug]
 
+def deadline 
+  today = Time.now
+  days_until_monday = (8 - today.wday) % 7
+  due_date = Time.at(today.to_i + days_until_monday * 86400)
+  Time.local(due_date.year, due_date.month, due_date.day, 18, 0)
+end
+
+def hours_before_late
+  (deadline - Time.now).to_i / 3600
+end
+
 def sms(badguy, message)
   require './sms'
 

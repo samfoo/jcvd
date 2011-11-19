@@ -1,7 +1,10 @@
-Hello <%= badguy["email"] %>,
+Hello <%= badguy["name"].split(" ").first%>,
 
-Fill in your damn timecard, jackass.
+Here at Time Enforcement Commission, our records indicate that you haven't turned in your time sheet for the week ending <%= deadline.strftime("%d-%m-%Y") %>. Upstanding citizens such as yourself have nothing to worry about since there's nearly <%= hours_before_late %> hours left before it's overdue. Remember that time sheets are due at 6pm every Monday!
 
-Thanks,
+http://te.thoughtworks.com/
 
-Your friendly neighborhood PeiRen
+Thank you for your cooperation,
+
+Timecop
+Officer, Time Enforcement Commission
