@@ -22,7 +22,7 @@ Mechanize::log = Logger.new($stderr) if opts[:debug]
 today = Time.now
 
 if today.monday?
-  due_date = today
+  due_date = Time.at(today.to_i - 86400)
 else
   days_until_sunday = (7 - today.wday) % 7
   due_date = Time.at(today.to_i + days_until_sunday * 86400)
