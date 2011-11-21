@@ -76,16 +76,20 @@ def email(badguy, subject, body)
   template = ERB.new(File.new(body).read)
   body = template.result(binding)
 
-  Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
-    :address => 'smtp.gmail.com',
-    :port => '587',
-    :enable_starttls_auto => true,
-    :user_name => ENV["TWUSER"],
-    :password => ENV["TWPASS"],
-    :authentication => :plain,
-    :domain => "HELO",
-  },
-  :subject => subject.strip, :body => body)
+  if badguy["email"].empty?
+    $stderr.puts "Unable to email #{badguy["name"]}. No email address."
+  else
+    Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
+      :address => 'smtp.gmail.com',
+      :port => '587',
+      :enable_starttls_auto => true,
+      :user_name => ENV["TWUSER"],
+      :password => ENV["TWPASS"],
+      :authentication => :plain,
+      :domain => "HELO",
+    },
+    :subject => subject.strip, :body => body)
+  end
 end
 
 actions = opts.select { |k, v| v && [:sms, :call, :email].include?(k) }
