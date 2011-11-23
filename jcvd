@@ -22,7 +22,9 @@ usage: jcvd [OPTIONS...]
     :default => File.join(File.dirname(__FILE__), "email.subject.erb")
   opt :body, "The erb file to eval as the email body",
     :default => File.join(File.dirname(__FILE__), "email.body.erb")
-  
+
+  opt :break, "Break the fourth wall."
+
   opt :debug, "There's never enough time. Never enough for what? To satisfy a [developer who wants to see the logs]"
 end
 
@@ -92,20 +94,43 @@ def email(badguy, subject, body)
   end
 end
 
-actions = opts.select { |k, v| v && [:sms, :call, :email].include?(k) }
-gerunds = actions.keys.collect { |a| "#{a}ing" }
-if gerunds.size > 1
-  sentence = gerunds[0..-2].join(", ").capitalize + " and " + gerunds[-1]
-else
-  sentence = gerunds.first.capitalize
+def karate
+  begin
+    require 'launchy'
+  rescue LoadError
+    puts <<-EOF
+     ::::::::::: ::::::::  :::     ::: ::::::::: 
+        :+:    :+:    :+: :+:     :+: :+:    :+: 
+       +:+    +:+        +:+     +:+ +:+    +:+  
+      +#+    +#+        +#+     +:+ +#+    +:+   
+     +#+    +#+         +#+   +#+  +#+    +#+    
+#+# #+#    #+#    #+#   #+#+#+#   #+#    #+#     
+#####      ########      ###     #########
+  will kick you in your face if you don't fill out your timecards.
+    EOF
+  else
+    Launchy.open('http://trailers.apple.com/trailers/independent/jcvd/')
+  end
 end
 
-ARGF.each do |timecode|
-  badguy = JSON.parse(timecode)
+karate if opts[:break]
 
-  puts "#{sentence} #{badguy["name"]}"
+actions = opts.select { |k, v| v && [:sms, :call, :email].include?(k) }
+unless actions.empty?
+  gerunds = actions.keys.collect { |a| "#{a}ing" }
+  if gerunds.size > 1
+    sentence = gerunds[0..-2].join(", ").capitalize + " and " + gerunds[-1]
+  else
+    sentence = gerunds.first.capitalize
+  end
 
-  sms(badguy, opts[:message]) if opts[:sms]
-  call(badguy, opts[:say]) if opts[:call]
-  email(badguy, opts[:subject], opts[:body]) if opts[:email]
+  ARGF.each do |timecode|
+    badguy = JSON.parse(timecode)
+
+    puts "#{sentence} #{badguy["name"]}"
+
+    sms(badguy, opts[:message]) if opts[:sms]
+    call(badguy, opts[:say]) if opts[:call]
+    email(badguy, opts[:subject], opts[:body]) if opts[:email]
+  end
 end
