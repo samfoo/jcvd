@@ -30,4 +30,8 @@ jcvd --help
 See setup_template.sh for environment variables that must be set in order to run the app. 
 
 You will need a Twilio account to make phone calls.
+
+Data to be fed into jcvd is in format
+{"name":"a","email":"a@b.com","mobile":"c"}
+
 ```
