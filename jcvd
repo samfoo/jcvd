@@ -86,7 +86,7 @@ def email(badguy, subject, body)
     else
       Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
         :address => 'smtp.gmail.com',
-        :port => '587',
+        :port => ENV["SMTP_PORT"],
         :enable_starttls_auto => true,
         :user_name => ENV["TWUSER"],
         :password => ENV["TWPASS"],

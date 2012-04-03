@@ -21,3 +21,7 @@ export PPASS=yours
 
 # choose mail client
 export USE_LOCAL_MAIL=false
+
+# smtp.gmail port
+export SMTP_PORT=587 
+# Chi is 465
