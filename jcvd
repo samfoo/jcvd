@@ -81,16 +81,20 @@ def email(badguy, subject, body)
   if badguy["email"].empty?
     $stderr.puts "Unable to email #{badguy["name"]}. No email address."
   else
-    Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
-      :address => 'smtp.gmail.com',
-      :port => '587',
-      :enable_starttls_auto => true,
-      :user_name => ENV["TWUSER"],
-      :password => ENV["TWPASS"],
-      :authentication => :plain,
-      :domain => "HELO",
-    },
-    :subject => subject.strip, :body => body)
+    if ENV["USE_LOCAL_MAIL"] == 'true'
+      Pony.mail(:to => badguy["email"], :subject => subject.strip, :body => body)
+    else
+      Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
+        :address => 'smtp.gmail.com',
+        :port => '587',
+        :enable_starttls_auto => true,
+        :user_name => ENV["TWUSER"],
+        :password => ENV["TWPASS"],
+        :authentication => :plain,
+        :domain => "HELO",
+      },
+      :subject => subject.strip, :body => body)
+    end
   end
 end
 
