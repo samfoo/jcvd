@@ -9,6 +9,7 @@
 ```
 ![JCVD](https://github.com/samfoo/jcvd/raw/master/jcvd.jpg)
 
+```
 Purpose:
 Get names of people with late timesheets
 Contact people who have late timesheets
@@ -29,3 +30,4 @@ jcvd --help
 See setup_template.sh for environment variables that must be set in order to run the app. 
 
 You will need a Twilio account to make phone calls.
+```
