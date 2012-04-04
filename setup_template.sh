@@ -23,5 +23,5 @@ export PPASS=yours
 export USE_LOCAL_MAIL=false
 
 # smtp.gmail port
-export SMTP_PORT=587 
-# Chi is 465
+export SMTP_PORT=587 # au
+# export SMTP_PORT=25 # Chicago

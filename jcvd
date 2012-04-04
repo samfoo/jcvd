@@ -88,7 +88,7 @@ def email(badguy, subject, body)
         :address => 'smtp.gmail.com',
         :port => ENV["SMTP_PORT"],
         :enable_starttls_auto => true,
-        :user_name => ENV["TWUSER"],
+        :user_name => "#{ENV["TWUSER"]}@thoughtworks.com",
         :password => ENV["TWPASS"],
         :authentication => :plain,
         :domain => "HELO",
