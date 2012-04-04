@@ -42,13 +42,13 @@ def hours_before_late
 end
 
 def sms(badguy, message)
-  require './sms'
+  ENV["TWILIO_SMS"] == 'true' ? (require './twilio_sms') : (require './au_sms')
 
   template = ERB.new(File.new(message).read)
   body = template.result(binding)
 
   mobile = badguy["mobile"] || ""
-  sms = ThoughtWorks::SMS.new(ENV["SMSUSER"], ENV["SMSPASS"])
+  sms = ThoughtWorks::SMS.new(ENV["SMSUSER"], ENV["SMSPASS"]) # for twilio, this is sid and auth token
   if mobile.empty?
     $stderr.puts "Unable to sms #{badguy["name"]}. No mobile number."
   else
