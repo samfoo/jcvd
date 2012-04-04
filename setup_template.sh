@@ -12,6 +12,8 @@ export TWILIO_AUTH=yours
 # default au 
 export TWILIO_AUTHORIZED_CALL_FROM=+61467970000 
 export TWILIO_AUTHORIZED_SMS_FROM=+14155992671 
+# export TWILIO_AUTHORIZED_CALL_FROM=7736349969 # chicago
+# export TWILIO_AUTHORIZED_SMS_FROM=7736349969 # chicago
 
 # SMS by default uses http://smsmaster.m4u.com.au
 export SMSUSER=yours

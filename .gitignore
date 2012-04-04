@@ -3,3 +3,4 @@ Gemfile.lock
 *.swo
 setup.sh
 testdata.json
+.bundle
