@@ -85,7 +85,7 @@ def email(badguy, subject, body)
         :port => APP_CONFIG['smtp_port'],
         :enable_starttls_auto => true,
         :user_name => "#{APP_CONFIG['twuser']}@thoughtworks.com",
-        :password => APP_CONFIG['twpass'],
+        :password => ENV['TWPASS'],
         :authentication => :plain,
         :domain => "HELO",
       },
