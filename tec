@@ -32,18 +32,14 @@ deadline = due_date.strftime("%d/%m/%Y")
 
 user = ENV["PUSER"] 
 pass = ENV["PPASS"] 
-$stderr.puts "They killed his timesheet ten years ago... on the week ending #{deadline}..."
-$stderr.puts "There's still time to save her."
+$stderr.puts "Deadline: #{deadline}..."
 ts = ThoughtWorks::Timesheets.new(user, pass)
 badguys = ts.lates(deadline, opts[:region])
-$stderr.puts "There were #{badguys.size} of them..."
+$stderr.puts "#{badguys.size} timesheets not submitted yet"
 
 user = ENV["TWUSER"]
 pass = ENV["TWPASS"]
 gab = ThoughtWorks::Gab.new(user.gsub(/@thoughtworks\.com/, ""), pass)
-
-$stderr.puts "Forgetting your timesheet is forever... until now."
-$stderr.puts "The Time Enforcement Commission is on the case."
 
 badguys.each do |b|
   # A couple people have unicode craziness, and either oracle or gab are

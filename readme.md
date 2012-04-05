@@ -1,15 +1,4 @@
 ```
-     ::::::::::: ::::::::  :::     ::: ::::::::: 
-        :+:    :+:    :+: :+:     :+: :+:    :+: 
-       +:+    +:+        +:+     +:+ +:+    +:+  
-      +#+    +#+        +#+     +:+ +#+    +:+   
-     +#+    +#+         +#+   +#+  +#+    +#+    
-#+# #+#    #+#    #+#   #+#+#+#   #+#    #+#     
-#####      ########      ###     #########
-```
-![JCVD](https://github.com/samfoo/jcvd/raw/master/jcvd.jpg)
-
-```
 Purpose:
 Get names of people with late timesheets
 Contact people who have late timesheets
@@ -39,7 +28,5 @@ Twillio pricing: https://www.twilio.com/pricing
 
 Data to be fed into jcvd is in format
 {"name":"a","email":"a@b.com","mobile":"c"}
-
-
 
 ```

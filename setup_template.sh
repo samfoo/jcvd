@@ -3,12 +3,12 @@
 # source setup.sh
 
 # TW Active Directory
-export TWUSER=yours
-export TWPASS=yours
+export TWUSER=
+export TWPASS=
 
 # Twilio 
-export TWILIO_SID=yours
-export TWILIO_AUTH=yours
+export TWILIO_SID=
+export TWILIO_AUTH=
 # default au 
 export TWILIO_AUTHORIZED_CALL_FROM=+61467970000 
 export TWILIO_AUTHORIZED_SMS_FROM=+14155992671 
@@ -16,8 +16,8 @@ export TWILIO_AUTHORIZED_SMS_FROM=+14155992671
 # export TWILIO_AUTHORIZED_SMS_FROM=7736349969 # chicago
 
 # SMS by default uses http://smsmaster.m4u.com.au
-export SMSUSER=yours
-export SMSPASS=yours
+export SMSUSER=
+export SMSPASS=
 # To use twilio sms, enable the below settings
 # export TWILIO_SMS=true
 # export SMSUSER=$TWILIO_SID
