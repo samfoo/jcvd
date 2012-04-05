@@ -8,7 +8,7 @@ module ThoughtWorks
     end
 
     def call(number, say)
-      @account.calls.create(:from => ENV["TWILIO_AUTHORIZED_CALL_FROM"], :to => number, :url => say)
+      @account.calls.create(:from => APP_CONFIG['twilio_number'], :to => number, :url => say)
     end
   end
 end

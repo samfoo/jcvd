@@ -1,0 +1,1 @@
+APP_CONFIG = YAML.load_file('./app_config.yml')

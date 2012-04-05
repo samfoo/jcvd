@@ -1,11 +1,14 @@
 Purpose:
-Get names of people with late timesheets
-Contact people who have late timesheets
+Get names of people with late timesheets (tec)
+Contact people who have late timesheets (jcvd)
 
 To see options:
 jcvd --help
 
 To use:
+1. You must be on the VPN
+2. Fill in options in app_config.yml or use the Jenkins job (not included on github) to do it for you.
+
 tec --region desired_region | jcvd --call
 
 or
@@ -16,11 +19,9 @@ jcvd --email file
 in the us:
 tec --region us | jcvd --email
 or
-tec --region us | jcvd --email --sms
+tec --region us | jcvd --email --sms --phone
 
-default region is australia (au) 
-
-See setup_template.sh for environment variables that must be set in order to run the app. 
+default region is now 'us', not australia (au) 
 
 You will need a Twilio account to make phone calls.
 Twillio pricing: https://www.twilio.com/pricing

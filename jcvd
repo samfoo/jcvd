@@ -4,6 +4,7 @@ require 'erb'
 require 'json'
 require 'logger'
 require 'trollop'
+require './config_helper'
 
 opts = Trollop::options do
   banner <<-EOS
@@ -23,8 +24,6 @@ usage: jcvd [OPTIONS...]
   opt :body, "The erb file to eval as the email body",
     :default => File.join(File.dirname(__FILE__), "email.body.erb")
 
-  opt :break, "Break the fourth wall."
-
   opt :debug, "There's never enough time. Never enough for what? To satisfy a [developer who wants to see the logs]"
 end
 
@@ -42,13 +41,13 @@ def hours_before_late
 end
 
 def sms(badguy, message)
-  ENV["TWILIO_SMS"] == 'true' ? (require './twilio_sms') : (require './au_sms')
+  APP_CONFIG['twilio_sms'] == true ? (require './twilio_sms') : (require './au_sms')
 
   template = ERB.new(File.new(message).read)
   body = template.result(binding)
 
   mobile = badguy["mobile"] || ""
-  sms = ThoughtWorks::SMS.new(ENV["SMSUSER"], ENV["SMSPASS"]) # for twilio, this is sid and auth token
+  sms = ThoughtWorks::SMS.new(APP_CONFIG['twilio_sid'], APP_CONFIG['twilio_auth'])
   if mobile.empty?
     $stderr.puts "Unable to sms #{badguy["name"]}. No mobile number."
   else
@@ -60,7 +59,7 @@ def call(badguy, say)
   require './phone'
 
   mobile = badguy["mobile"] || ""
-  phone = ThoughtWorks::Phone.new(ENV["TWILIO_SID"], ENV["TWILIO_AUTH"])
+  phone = ThoughtWorks::Phone.new(APP_CONFIG['twilio_sid'], APP_CONFIG['twilio_auth'])
 
   if mobile.empty?
     $stderr.puts "Unable to call #{badguy["name"]}. No mobile number."
@@ -81,43 +80,18 @@ def email(badguy, subject, body)
   if badguy["email"].empty?
     $stderr.puts "Unable to email #{badguy["name"]}. No email address."
   else
-    if ENV["USE_LOCAL_MAIL"] == 'true'
-      Pony.mail(:to => badguy["email"], :subject => subject.strip, :body => body)
-    else
       Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
         :address => 'smtp.gmail.com',
-        :port => ENV["SMTP_PORT"],
+        :port => APP_CONFIG['smtp_port'],
         :enable_starttls_auto => true,
-        :user_name => "#{ENV["TWUSER"]}@thoughtworks.com",
-        :password => ENV["TWPASS"],
+        :user_name => "#{APP_CONFIG['twuser']}@thoughtworks.com",
+        :password => APP_CONFIG['twpass'],
         :authentication => :plain,
         :domain => "HELO",
       },
       :subject => subject.strip, :body => body)
-    end
   end
 end
-
-def karate
-  begin
-    require 'launchy'
-  rescue LoadError
-    puts <<-EOF
-     ::::::::::: ::::::::  :::     ::: ::::::::: 
-        :+:    :+:    :+: :+:     :+: :+:    :+: 
-       +:+    +:+        +:+     +:+ +:+    +:+  
-      +#+    +#+        +#+     +:+ +#+    +:+   
-     +#+    +#+         +#+   +#+  +#+    +#+    
-#+# #+#    #+#    #+#   #+#+#+#   #+#    #+#     
-#####      ########      ###     #########
-  will kick you in your face if you don't fill out your timecards.
-    EOF
-  else
-    Launchy.open('http://trailers.apple.com/trailers/independent/jcvd/')
-  end
-end
-
-karate if opts[:break]
 
 actions = opts.select { |k, v| v && [:sms, :call, :email].include?(k) }
 unless actions.empty?
