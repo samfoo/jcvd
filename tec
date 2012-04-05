@@ -48,7 +48,7 @@ $stderr.puts "The Time Enforcement Commission is on the case."
 badguys.each do |b|
   # A couple people have unicode craziness, and either oracle or gab are
   # blowing chunks when they encounter it. Just one off them here for now.
-  b = b.gsub("\xea", 'e').gsub("\xf6", 'o')
+  b = b.gsub("\xea", 'e').gsub("\xf6", 'o').gsub("\xED", 'i')
 
   name, number_and_email = gab.search(b, opts[:region]).first
   number, email = *number_and_email
