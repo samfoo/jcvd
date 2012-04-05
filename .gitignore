@@ -4,3 +4,4 @@ Gemfile.lock
 setup.sh
 testdata.json
 .bundle
+FULL*
