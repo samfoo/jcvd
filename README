@@ -8,6 +8,7 @@ jcvd --help
 To use:
 1. You must be on the VPN
 2. Fill in options in app_config.yml or use the Jenkins job (not included on github) to do it for you.
+3. export TWPASS=yourpass
 
 tec --region desired_region | jcvd --call
 
