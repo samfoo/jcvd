@@ -6,26 +6,26 @@ To see options:
 jcvd --help
 
 To use:
-1. You must be on the VPN
-2. Fill in options in app_config.yml or use the Jenkins job (not included on github) to do it for you.
-3. export TWPASS=yourpass
+Ruby 1.9.2. App assumes use of rvm. 
+1. You must be on the Chi TW VPN
+2. Fill in options in app_config.yml (you will need someone to email you the twilio_auth key). Example value for TWUSER is the your_handle part of your_handle@domain.com
+3. export your AD password as an environment variable (example: export TWPASS=yourpass)
+4. Make test file testfile.json containing a line like {"name":"Your Name","email":"your_email@domain.com","mobile":"1111111111"} 
+5. bundle install
+6. bundle exec ./jcvd --email --sms --call testdata.json # this tests the contact capability 
+7. bundle exec ./tec # this tests the data retrieval capability. You might not have access to Peoplesoft. 
+
+Do NOT pipe the output of tec to jcvd unless you are intentionally contacting several hundred people
+
+Example usages: 
 
 tec --region desired_region | jcvd --call
 
-or
+tec > file ; jcvd --email file
 
-tec > file
-jcvd --email file
+tec --region au | jcvd --email
 
-in the us:
-tec --region us | jcvd --email
-or
 tec --region us | jcvd --email --sms --phone
-
-default region is now 'us', not australia (au) 
 
 You will need a Twilio account to make phone calls.
 Twillio pricing: https://www.twilio.com/pricing
-
-Data to be fed into jcvd is in format
-{"name":"a","email":"a@b.com","mobile":"c"}
