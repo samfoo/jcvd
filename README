@@ -2,20 +2,20 @@ Purpose:
 Get names of people with late timesheets (tec)
 Contact people who have late timesheets (jcvd)
 
+WARNING: Do NOT pipe the output of tec to jcvd unless you are intentionally contacting several hundred people
+
 To see options:
 jcvd --help
 
 To use:
 Ruby 1.9.2. App assumes use of rvm. 
-1. You must be on the Chi TW VPN
+1. You must be on the Chi TW VPN or twdata wifi or office ethernet. 
 2. Fill in options in app_config.yml (you will need someone to email you the twilio_auth key). Example value for TWUSER is the your_handle part of your_handle@domain.com
-3. export your AD password as an environment variable (example: export TWPASS=yourpass)
-4. Make test file testfile.json containing a line like {"name":"Your Name","email":"your_email@domain.com","mobile":"1111111111"} 
+3. export your Active Directory password as an environment variable (example: export TWPASS=yourpass)
+4. Make test file testdata.json containing a line like {"name":"Your Name","email":"your_email@domain.com","mobile":"1111111111"} 
 5. bundle install
-6. bundle exec ./jcvd --email --sms --call testdata.json # this tests the contact capability 
+6. bundle exec ./jcvd --email --sms --call testdata.json # this contacts all people in the testdata file via email, sms, and phonecall.  
 7. bundle exec ./tec # this tests the data retrieval capability. You might not have access to Peoplesoft. 
-
-Do NOT pipe the output of tec to jcvd unless you are intentionally contacting several hundred people
 
 Example usages: 
 
@@ -29,3 +29,8 @@ tec --region us | jcvd --email --sms --phone
 
 You will need a Twilio account to make phone calls.
 Twillio pricing: https://www.twilio.com/pricing
+
+Common authentication error if you run "bundle exec ./tec" but do not have access to Peoplesoft: 
+/usr/share/ruby-rvm/gems/ruby-1.9.2-p318@jcvd/gems/mechanize-2.3/lib/mechanize/form.rb:173:in `method_missing': undefined method `ICAction=' for #<Mechanize::Form:0x00000002e47530> (NoMethodError)
+	from /home/anthony/LindaTest/jcvd/timesheets.rb:24:in `lates'
+	from ./tec:38:in `<main>'
