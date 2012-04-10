@@ -32,5 +32,5 @@ Twillio pricing: https://www.twilio.com/pricing
 
 Common authentication error if you run "bundle exec ./tec" but do not have access to Peoplesoft: 
 /usr/share/ruby-rvm/gems/ruby-1.9.2-p318@jcvd/gems/mechanize-2.3/lib/mechanize/form.rb:173:in `method_missing': undefined method `ICAction=' for #<Mechanize::Form:0x00000002e47530> (NoMethodError)
-	from /home/anthony/LindaTest/jcvd/timesheets.rb:24:in `lates'
+	from /your/working/directory/jcvd/timesheets.rb:24:in `lates'
 	from ./tec:38:in `<main>'
