@@ -6,6 +6,7 @@ module ThoughtWorks
   class Timesheets
     def initialize(user, pass)
       @agent = Mechanize.new
+      @agent.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       login(user, pass)
     end
 
