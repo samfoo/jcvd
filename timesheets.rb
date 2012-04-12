@@ -6,7 +6,9 @@ module ThoughtWorks
   class Timesheets
     def initialize(user, pass)
       @agent = Mechanize.new
-      @agent.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      cert_store = OpenSSL::X509::Store.new
+      cert_store.add_file 'cacert.pem'
+      @agent.agent.cert_store = cert_store
       login(user, pass)
     end
 
