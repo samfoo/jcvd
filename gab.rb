@@ -4,6 +4,8 @@ module ThoughtWorks
   class Gab
     def initialize(user, pass)
       @agent = Mechanize.new
+      ca_path = File.expand_path "curl-ca-bundle.crt"
+      @agent.agent.http.ca_file = ca_path
       @gab = login(user, pass)
     end
 
