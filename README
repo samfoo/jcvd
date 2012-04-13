@@ -10,7 +10,7 @@ jcvd --help
 To use:
 Ruby 1.9.2. App assumes use of rvm. 
 1. You must be on the Chi TW VPN or twdata wifi or office ethernet. 
-2. Fill in options in app_config.yml (you will need someone to email you the twilio_auth key). Example value for TWUSER is the your_handle part of your_handle@domain.com
+2. Fill in options in app_config.yml (you will need someone to email you the twilio_auth key). Example value for TWUSER is the your_handle part of your_handle@domain.com (to get results for previous week, set "week" to "prev")
 3. export your Active Directory password as an environment variable (example: export TWPASS=yourpass)
 4. Make test file testdata.json containing a line like {"name":"Your Name","email":"your_email@domain.com","mobile":"1111111111"} # each entry must be all on one line
 5. gem install bundle ; bundle install
