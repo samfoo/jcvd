@@ -22,11 +22,16 @@ Mechanize::log = Logger.new($stderr) if opts[:debug]
 
 today = Time.now
 
+one_day_in_seconds = 86400
+
 if today.monday?
-  due_date = Time.at(today.to_i - 86400)
+  due_date = Time.at(today.to_i - one_day_in_seconds)
+elsif APP_CONFIG['week'] == 'prev' 
+  days_since_sunday = today.wday
+  due_date = Time.at(today.to_i - days_since_sunday * one_day_in_seconds)
 else
   days_until_sunday = (7 - today.wday) % 7
-  due_date = Time.at(today.to_i + days_until_sunday * 86400)
+  due_date = Time.at(today.to_i + days_until_sunday * one_day_in_seconds)
 end
 
 deadline = due_date.strftime("%d/%m/%Y")
@@ -36,12 +41,12 @@ pass = ENV['TWPASS']
 $stderr.puts "Deadline: #{deadline}..."
 ts = ThoughtWorks::Timesheets.new(user, pass)
 badguys = ts.lates(deadline, opts[:region])
-$stderr.puts "#{badguys.size} timesheets not submitted yet"
+$stderr.puts "#{badguys.size} timesheets not submitted yet. Excluding Roy from results."
 
 user = APP_CONFIG['twuser']
 pass = ENV['TWPASS']
 gab = ThoughtWorks::Gab.new(user.gsub(/@thoughtworks\.com/, ""), pass)
-
+puts "about to print"
 badguys.each do |b|
   # A couple people have unicode craziness, and either oracle or gab are
   # blowing chunks when they encounter it. Just one off them here for now.
@@ -49,6 +54,5 @@ badguys.each do |b|
 
   name, number_and_email = gab.search(b, opts[:region]).first
   number, email = *number_and_email
-  puts ({"name" => b, "email" => email, "mobile" => number}.to_json)
+  puts ({"name" => b, "email" => email, "mobile" => number}.to_json) unless email =~ /nrsingha/
 end
-
