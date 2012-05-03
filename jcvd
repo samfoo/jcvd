@@ -11,7 +11,7 @@ opts = Trollop::options do
 usage: jcvd [OPTIONS...]
   EOS
   opt :call, "Call some bad guys up. You know: on their phones."
-  opt :say, "The URL to the twiml you want eval'd during the call", 
+  opt :say, "The URL to the twiml you want eval'd during the call",
     :default => "http://bit.ly/tw-timesheets"
 
   opt :sms, "Send some fools a message."
@@ -29,7 +29,7 @@ end
 
 Mechanize::log = Logger.new($stderr) if opts[:debug]
 
-def deadline 
+def deadline
   today = Time.now
   days_until_monday = (8 - today.wday) % 7
   due_date = Time.at(today.to_i + days_until_monday * 86400)
@@ -40,31 +40,48 @@ def hours_before_late
   (deadline - Time.now).to_i / 3600
 end
 
+def get_phones(phone_info)
+  phone = phone_info || ""
+  phone_identifier = /\+?(\d{0,2})\s*\(?(\d{3})\)?\s*(\d{3})\s*(\d{4})/
+  phone.scan(phone_identifier).map do |n|
+    n[0] = '1' if n.first.empty?
+    '+' + n.join
+  end
+end
+
 def sms(badguy, message)
   APP_CONFIG['twilio_sms'] == true ? (require './twilio_sms') : (require './au_sms')
 
   template = ERB.new(File.new(message).read)
   body = template.result(binding)
 
-  mobile = badguy["mobile"] || ""
+  numbers = get_phones(badguy["mobile"])
   sms = ThoughtWorks::SMS.new(APP_CONFIG['twilio_sid'], APP_CONFIG['twilio_auth'])
-  if mobile.empty?
+  if numbers.empty?
     $stderr.puts "Unable to sms #{badguy["name"]}. No mobile number."
   else
-    sms.send(mobile, body)
+    begin
+      numbers.each{|mobile| sms.send(mobile, body)}
+    rescue
+      $stderr.puts "Unable to sms #{badguy["name"]}. Mobile number invalid #{mobile}."
+    end
   end
 end
 
 def call(badguy, say)
   require './phone'
 
-  mobile = badguy["mobile"] || ""
+  mobile = get_phone(badguy["mobile"])
   phone = ThoughtWorks::Phone.new(APP_CONFIG['twilio_sid'], APP_CONFIG['twilio_auth'])
 
   if mobile.empty?
     $stderr.puts "Unable to call #{badguy["name"]}. No mobile number."
   else
-    phone.call(mobile, say)
+    begin
+      numbers.each{|mobile| phone.call(mobile, say)}
+    rescue
+      $stderr.puts "Unable to call #{badguy["name"]}. Mobile number invalid #{mobile}."
+    end
   end
 end
 
@@ -80,6 +97,7 @@ def email(badguy, subject, body)
   if badguy["email"].empty?
     $stderr.puts "Unable to email #{badguy["name"]}. No email address."
   else
+    begin
       Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
         :address => 'smtp.gmail.com',
         :port => APP_CONFIG['smtp_port'],
@@ -88,8 +106,10 @@ def email(badguy, subject, body)
         :password => ENV['TWPASS'],
         :authentication => :plain,
         :domain => "HELO",
-      },
-      :subject => subject.strip, :body => body)
+      }, :subject => subject.strip, :body => body)
+    rescue
+      $stderr.puts "Unable to email #{badguy["name"]}. Email invalid #{badguy["email"]}."
+    end
   end
 end
 
