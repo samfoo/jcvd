@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'yaml'
 require 'json'
 require 'logger'
 require 'trollop'
@@ -26,7 +27,7 @@ one_day_in_seconds = 86400
 
 if today.monday?
   due_date = Time.at(today.to_i - one_day_in_seconds)
-elsif APP_CONFIG['week'] == 'prev' 
+elsif APP_CONFIG['week'] == 'prev'
   days_since_sunday = today.wday
   due_date = Time.at(today.to_i - days_since_sunday * one_day_in_seconds)
 else
@@ -36,7 +37,7 @@ end
 
 deadline = due_date.strftime("%d/%m/%Y")
 
-user = APP_CONFIG['twuser'] 
+user = APP_CONFIG['twuser']
 pass = ENV['TWPASS']
 $stderr.puts "Deadline: #{deadline}..."
 ts = ThoughtWorks::Timesheets.new(user, pass)
