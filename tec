@@ -47,7 +47,6 @@ $stderr.puts "#{badguys.size} timesheets not submitted yet. Excluding Roy from r
 user = APP_CONFIG['twuser']
 pass = ENV['TWPASS']
 gab = ThoughtWorks::Gab.new(user.gsub(/@thoughtworks\.com/, ""), pass)
-puts "about to print"
 badguys.each do |b|
   # A couple people have unicode craziness, and either oracle or gab are
   # blowing chunks when they encounter it. Just one off them here for now.
