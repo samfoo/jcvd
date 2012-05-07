@@ -1,16 +1,18 @@
 #!/usr/bin/env ruby
 
+require 'yaml'
 require 'erb'
 require 'json'
 require 'logger'
 require 'trollop'
+require './config_helper'
 
 opts = Trollop::options do
   banner <<-EOS
 usage: jcvd [OPTIONS...]
   EOS
   opt :call, "Call some bad guys up. You know: on their phones."
-  opt :say, "The URL to the twiml you want eval'd during the call", 
+  opt :say, "The URL to the twiml you want eval'd during the call",
     :default => "http://bit.ly/tw-timesheets"
 
   opt :sms, "Send some fools a message."
@@ -18,19 +20,18 @@ usage: jcvd [OPTIONS...]
     :default => File.join(File.dirname(__FILE__), "sms.body.erb")
 
   opt :email, "Drop the people's elbow on some peep's inboxes."
+  opt :dryrun, "Doesn't really send anything but outputs what would have been done"
   opt :subject, "The erb file to eval as the email subject",
     :default => File.join(File.dirname(__FILE__), "email.subject.erb")
   opt :body, "The erb file to eval as the email body",
     :default => File.join(File.dirname(__FILE__), "email.body.erb")
-
-  opt :break, "Break the fourth wall."
 
   opt :debug, "There's never enough time. Never enough for what? To satisfy a [developer who wants to see the logs]"
 end
 
 Mechanize::log = Logger.new($stderr) if opts[:debug]
 
-def deadline 
+def deadline
   today = Time.now
   days_until_monday = (8 - today.wday) % 7
   due_date = Time.at(today.to_i + days_until_monday * 86400)
@@ -41,35 +42,56 @@ def hours_before_late
   (deadline - Time.now).to_i / 3600
 end
 
-def sms(badguy, message)
-  require './sms'
+def get_phones(phone_info)
+  phone = phone_info || ""
+  phone_identifier = /\+?(\d{0,2})\s*[-\.\/\\]?\s*\(?(\d{3})\)?\s*[-\.\/\\]?\s*(\d{3})\s*[-\.\/\\]?\s*(\d{4})/
+  phone.scan(phone_identifier).map do |n|
+    n[0] = '1' if n.first.empty?
+    '+' + n.join
+  end
+end
+
+def sms(badguy, message, dryrun = false)
+  APP_CONFIG['twilio_sms'] == true ? (require './twilio_sms') : (require './au_sms')
 
   template = ERB.new(File.new(message).read)
   body = template.result(binding)
 
-  mobile = badguy["mobile"] || ""
-  sms = ThoughtWorks::SMS.new(ENV["SMSUSER"], ENV["SMSPASS"])
-  if mobile.empty?
+  numbers = get_phones(badguy["mobile"])
+  sms = ThoughtWorks::SMS.new(APP_CONFIG['twilio_sid'], APP_CONFIG['twilio_auth'], dryrun)
+  if numbers.empty?
     $stderr.puts "Unable to sms #{badguy["name"]}. No mobile number."
   else
-    sms.send(mobile, body)
+    numbers.each do |mobile| 
+      begin
+        sms.send(mobile, body)
+      rescue
+        $stderr.puts "Unable to sms #{badguy["name"]}. Mobile number invalid #{mobile}."
+      end
+    end
   end
 end
 
-def call(badguy, say)
+def call(badguy, say, dryrun = false)
   require './phone'
 
-  mobile = badguy["mobile"] || ""
-  phone = ThoughtWorks::Phone.new(ENV["TWILIO_SID"], ENV["TWILIO_AUTH"])
+  phones = get_phones(badguy["mobile"])
+  phone = ThoughtWorks::Phone.new(APP_CONFIG['twilio_sid'], APP_CONFIG['twilio_auth'], dryrun)
 
-  if mobile.empty?
+  if phones.empty?
     $stderr.puts "Unable to call #{badguy["name"]}. No mobile number."
   else
-    phone.call(mobile, say)
+    phones.each do |mobile|
+      begin
+        phone.call(mobile, say)
+      rescue
+        $stderr.puts "Unable to call #{badguy["name"]} using mobile number #{mobile}."
+      end
+    end
   end
 end
 
-def email(badguy, subject, body)
+def email(badguy, subject, body, dryrun = false)
   require 'pony'
 
   template = ERB.new(File.new(subject).read)
@@ -81,39 +103,26 @@ def email(badguy, subject, body)
   if badguy["email"].empty?
     $stderr.puts "Unable to email #{badguy["name"]}. No email address."
   else
-    Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
-      :address => 'smtp.gmail.com',
-      :port => '587',
-      :enable_starttls_auto => true,
-      :user_name => ENV["TWUSER"],
-      :password => ENV["TWPASS"],
-      :authentication => :plain,
-      :domain => "HELO",
-    },
-    :subject => subject.strip, :body => body)
+    begin
+      if dryrun
+        puts "Sending email to #{badguy['email']} with subject 'subject.strip' and body:"
+        puts body
+      else
+        Pony.mail(:to => badguy["email"], :via => :smtp, :via_options => {
+          :address => 'smtp.gmail.com',
+          :port => APP_CONFIG['smtp_port'],
+          :enable_starttls_auto => true,
+          :user_name => "#{APP_CONFIG['twuser']}@thoughtworks.com",
+          :password => ENV['TWPASS'],
+          :authentication => :plain,
+          :domain => "HELO",
+        }, :subject => subject.strip, :body => body)
+      end
+    rescue
+      $stderr.puts "Unable to email #{badguy["name"]}. Email invalid #{badguy["email"]}."
+    end
   end
 end
-
-def karate
-  begin
-    require 'launchy'
-  rescue LoadError
-    puts <<-EOF
-     ::::::::::: ::::::::  :::     ::: ::::::::: 
-        :+:    :+:    :+: :+:     :+: :+:    :+: 
-       +:+    +:+        +:+     +:+ +:+    +:+  
-      +#+    +#+        +#+     +:+ +#+    +:+   
-     +#+    +#+         +#+   +#+  +#+    +#+    
-#+# #+#    #+#    #+#   #+#+#+#   #+#    #+#     
-#####      ########      ###     #########
-  will kick you in your face if you don't fill out your timecards.
-    EOF
-  else
-    Launchy.open('http://trailers.apple.com/trailers/independent/jcvd/')
-  end
-end
-
-karate if opts[:break]
 
 actions = opts.select { |k, v| v && [:sms, :call, :email].include?(k) }
 unless actions.empty?
@@ -129,8 +138,8 @@ unless actions.empty?
 
     puts "#{sentence} #{badguy["name"]}"
 
-    sms(badguy, opts[:message]) if opts[:sms]
-    call(badguy, opts[:say]) if opts[:call]
-    email(badguy, opts[:subject], opts[:body]) if opts[:email]
+    sms(badguy, opts[:message], opts[:dryrun]) if opts[:sms]
+    call(badguy, opts[:say], opts[:dryrun]) if opts[:call]
+    email(badguy, opts[:subject], opts[:body], opts[:dryrun]) if opts[:email]
   end
 end

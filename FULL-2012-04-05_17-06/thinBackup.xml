@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jvnet.hudson.plugins.thinbackup.ThinBackupPluginImpl>
+  <fullBackupSchedule>0 12 * * *</fullBackupSchedule>
+  <diffBackupSchedule></diffBackupSchedule>
+  <forceQuietModeTimeout>120</forceQuietModeTimeout>
+  <backupPath>/Users/ThoughtWorks/repositories/jcvd</backupPath>
+  <nrMaxStoredFull>2</nrMaxStoredFull>
+  <cleanupDiff>false</cleanupDiff>
+  <moveOldBackupsToZipFile>false</moveOldBackupsToZipFile>
+  <backupBuildResults>false</backupBuildResults>
+  <backupBuildArchive>false</backupBuildArchive>
+  <backupNextBuildNumber>false</backupNextBuildNumber>
+  <excludedFilesRegex></excludedFilesRegex>
+</org.jvnet.hudson.plugins.thinbackup.ThinBackupPluginImpl>

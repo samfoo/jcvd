@@ -1,3 +1,7 @@
 Gemfile.lock
 *.swp
 *.swo
+setup.sh
+testdata.json
+.bundle
+FULL*/users/*

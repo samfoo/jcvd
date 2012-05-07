@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.PasswordParameterDefinition>
+          <name>TWPASS</name>
+          <description>Active Directory password</description>
+          <defaultValue>aca1YwbTRHBqZYI5FbIqcA==</defaultValue>
+        </hudson.model.PasswordParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>active_directory_username</name>
+          <description></description>
+          <defaultValue>lgoldste</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.PasswordParameterDefinition>
+          <name>twilio_auth_key</name>
+          <description></description>
+          <defaultValue>EwtxnM8JSindBQxKwrXnrPk//jUKEIvKhp0Yshjto91pxrVjBtNEcGplgjkVsipw</defaultValue>
+        </hudson.model.PasswordParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>contact_method</name>
+          <description>$0.01/sms
+$0.02/call
+emails are free</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>--email</string>
+              <string>--sms</string>
+              <string>--call</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name></name>
+        <refspec></refspec>
+        <url>git://github.com/lindaTW/jcvd.git/</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>**</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <disableSubmodules>false</disableSubmodules>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <pruneBranches>false</pruneBranches>
+    <remotePoll>false</remotePoll>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir></relativeTargetDir>
+    <reference></reference>
+    <excludedRegions></excludedRegions>
+    <excludedUsers></excludedUsers>
+    <gitConfigName></gitConfigName>
+    <gitConfigEmail></gitConfigEmail>
+    <skipTag>false</skipTag>
+    <includedRegions></includedRegions>
+    <scmName></scmName>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>export HOME=/Users/ThoughtWorks 
+source /Users/ThoughtWorks/.rvm/scripts/rvm
+rvm use 1.9.2
+gem install bundler
+bundle install --path .bundle
+echo &quot;twilio_auth : ${twilio_auth_key}&quot; &gt;&gt; app_config.yml
+echo &quot;twuser : ${active_directory_username}&quot; &gt;&gt; app_config.yml
+echo &quot;{\&quot;name\&quot;:\&quot;Linda\&quot;,\&quot;email\&quot;:\&quot;lgoldste@thoughtworks.com\&quot;,\&quot;mobile\&quot;:\&quot;18188004307\&quot;}&quot; &gt; testdata.json
+bundle exec jcvd $contact_method testdata.json</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

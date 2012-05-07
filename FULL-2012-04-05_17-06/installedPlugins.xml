@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jvnet.hudson.plugins.thinbackup.backup.PluginList>
+  <plugins>
+    <entry>
+      <string>github-api</string>
+      <string>1.18</string>
+    </entry>
+    <entry>
+      <string>Hudson core</string>
+      <string>1.458</string>
+    </entry>
+    <entry>
+      <string>translation</string>
+      <string>1.8</string>
+    </entry>
+    <entry>
+      <string>subversion</string>
+      <string>1.34</string>
+    </entry>
+    <entry>
+      <string>git</string>
+      <string>1.1.16</string>
+    </entry>
+    <entry>
+      <string>javadoc</string>
+      <string>1.0</string>
+    </entry>
+    <entry>
+      <string>cvs</string>
+      <string>1.6</string>
+    </entry>
+    <entry>
+      <string>ssh-slaves</string>
+      <string>0.21</string>
+    </entry>
+    <entry>
+      <string>ant</string>
+      <string>1.1</string>
+    </entry>
+    <entry>
+      <string>github</string>
+      <string>1.2</string>
+    </entry>
+    <entry>
+      <string>thinBackup</string>
+      <string>1.5</string>
+    </entry>
+    <entry>
+      <string>maven-plugin</string>
+      <string>1.458</string>
+    </entry>
+  </plugins>
+</org.jvnet.hudson.plugins.thinbackup.backup.PluginList>
