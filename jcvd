@@ -62,10 +62,12 @@ def sms(badguy, message, dryrun = false)
   if numbers.empty?
     $stderr.puts "Unable to sms #{badguy["name"]}. No mobile number."
   else
-    begin
-      numbers.each{|mobile| sms.send(mobile, body)}
-    rescue
-      $stderr.puts "Unable to sms #{badguy["name"]}. Mobile number invalid #{mobile}."
+    numbers.each do |mobile| 
+      begin
+        sms.send(mobile, body)
+      rescue
+        $stderr.puts "Unable to sms #{badguy["name"]}. Mobile number invalid #{mobile}."
+      end
     end
   end
 end
